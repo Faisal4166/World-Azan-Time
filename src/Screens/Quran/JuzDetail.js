@@ -1,28 +1,28 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Text, View, TouchableOpacity, FlatList} from 'react-native';
-import {Switch} from 'react-native-paper';
+import React, { useEffect, useRef, useState } from 'react';
+import { Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { Switch } from 'react-native-paper';
 import getStyle from './Styles';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../Components/Loader';
-import {SurahsDetail} from '../../redux/actions';
+import { SurahsDetail } from '../../redux/actions';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {isLoading} from '../../redux/constants';
+import { isLoading } from '../../redux/constants';
 import Theme from '../../Utils/useTheme';
-import ActionSheet, {SheetManager} from 'react-native-actions-sheet';
-import {TAFSEER, TRANSLATION} from '../../Utils/ActionSheetConstant';
+import ActionSheet, { SheetManager } from 'react-native-actions-sheet';
+import { TAFSEER, TRANSLATION } from '../../Utils/ActionSheetConstant';
 import Tafseer from '../../Components/ActionSheets/Tafseer/Tafseer';
 import getActionSheetStyle from '../../Utils/ActionSheetStyle';
 import TranslationReading from '../../Components/TranslationReading';
 import PrevNextButtons from '../../Components/PrevNextButtons';
-import {data} from '../../Utils/juzzAllData';
+import { data } from '../../Utils/juzzAllData';
 import Translation from '../../Components/ActionSheets/Translation';
 
-const JuzDetail = ({route}) => {
-  const {ActionSheetStyle} = getActionSheetStyle();
-  const {styles} = getStyle();
+const JuzDetail = ({ route }) => {
+  const { ActionSheetStyle } = getActionSheetStyle();
+  const { styles } = getStyle();
   const commonStyles = styles;
-  const {firstIndex, secondIndex, filteredData2} = route.params;
-  const {surah_detail} = useSelector(states => states.userReducer);
+  const { firstIndex, secondIndex, filteredData2 } = route.params;
+  const { surah_detail } = useSelector((states) => states.userReducer);
   const dispatch = useDispatch();
 
   const name = useRef(filteredData2.name);
@@ -41,11 +41,9 @@ const JuzDetail = ({route}) => {
     reading: false,
     tafseerText: '',
   });
-  const updatingRef = props => {
+  const updatingRef = (props) => {
     const filteredData = data.find((item, index) => index === index1.current);
-    const filterdData2 = filteredData.find(
-      (item, index) => index === index2.current,
-    );
+    const filterdData2 = filteredData.find((item, index) => index === index2.current);
     englishName.current = filterdData2?.englishName;
     name.current = filterdData2?.name;
     juz.current = filterdData2?.juz;
@@ -81,41 +79,35 @@ const JuzDetail = ({route}) => {
   };
   const returningData = () => {
     const lang = state.lang_toggle ? 'english_saheeh' : 'urdu_junagarhi';
-    return surah_detail.find(
-      item => item.number === surahNumber.current && item.lang === lang,
-    );
+    return surah_detail.find((item) => item.number === surahNumber.current && item.lang === lang);
   };
   const filterSurah = () => {
     let filterData = returningData();
     const datas = filterData?.data?.result?.slice(from.current, to.current);
     return datas;
   };
-  const onPressTafseer = text => {
-    setState({...state, tafseerText: text});
+  const onPressTafseer = (text) => {
+    setState({ ...state, tafseerText: text });
     SheetManager.show(TAFSEER);
   };
   const onPressTranslationArrow = () => {
     SheetManager.show(TRANSLATION);
   };
   const onPressTranslationButton = () => {
-    setState({...state, lang_toggle: !state.lang_toggle});
+    setState({ ...state, lang_toggle: !state.lang_toggle });
   };
-  const filteringData = props => {
+  const filteringData = (props) => {
     if (filter.current) {
       const filterData = filterSurah();
-      setState({...state, data: filterData});
+      setState({ ...state, data: filterData });
     } else {
       const temdata = returningData();
-      setState({...state, data: temdata?.data?.result});
+      setState({ ...state, data: temdata?.data?.result });
     }
   };
-  const DispatchFunction = props => {
+  const DispatchFunction = (props) => {
     const lang = state.lang_toggle ? 'english_saheeh' : 'urdu_junagarhi';
-    if (
-      !surah_detail.some(
-        item => item.number === surahNumber.current && item.lang === lang,
-      )
-    ) {
+    if (!surah_detail.some((item) => item.number === surahNumber.current && item.lang === lang)) {
       if (state.lang_toggle) {
         dispatch(SurahsDetail(surahNumber.current, 'english_saheeh'));
       }
@@ -125,11 +117,11 @@ const JuzDetail = ({route}) => {
     } else {
       if (filter.current) {
         const filterData = filterSurah();
-        setState({...state, data: filterData});
+        setState({ ...state, data: filterData });
       } else {
         // console.log('in filter');
         const temdata = returningData();
-        setState({...state, data: temdata?.data?.result});
+        setState({ ...state, data: temdata?.data?.result });
       }
     }
   };
@@ -156,24 +148,21 @@ const JuzDetail = ({route}) => {
           <Text style={commonStyles.heading_text}>{name.current}</Text>
         </View>
         <View style={commonStyles.button_container}>
-          <TranslationReading
-            state={state}
-            setState={setState}
-            onPress={onPressTranslationArrow}
-          />
+          <TranslationReading state={state} setState={setState} onPress={onPressTranslationArrow} />
         </View>
         <View style={commonStyles.flatlist_root}>
           <FlatList
             data={state.data}
             keyExtractor={(item, index) => index}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <>
                   <View
                     style={[
                       commonStyles.flatlist_card_container,
-                      index === 0 ? {marginTop: 10} : null,
-                    ]}>
+                      index === 0 ? { marginTop: 10 } : null,
+                    ]}
+                  >
                     <View style={styles.tafseerRow}>
                       <View>
                         <Text style={styles.tafseerText}>
@@ -184,22 +173,22 @@ const JuzDetail = ({route}) => {
                         {!state.reading ? (
                           <TouchableOpacity
                             activeOpacity={0.5}
-                            onPress={() => onPressTafseer(item.footnotes)}>
+                            onPress={() => onPressTafseer(item.footnotes)}
+                          >
                             <Text style={styles.tafseerText}>Tafseer</Text>
                           </TouchableOpacity>
                         ) : null}
                       </View>
                     </View>
 
-                    <Text style={commonStyles.flatlist_heading_text}>
-                      {item.arabic_text}
-                    </Text>
+                    <Text style={commonStyles.flatlist_heading_text}>{item.arabic_text}</Text>
                     {!state.reading ? (
                       <Text
                         style={[
                           commonStyles.flatlist_text,
-                          !state.lang_toggle ? {textAlign: 'right'} : null,
-                        ]}>
+                          !state.lang_toggle ? { textAlign: 'right' } : null,
+                        ]}
+                      >
                         {item.translation}
                       </Text>
                     ) : null}
